@@ -1,5 +1,5 @@
 #coding:utf-8
-import os
+import os,ntpath
 import moviepy.editor as MovieEditor
 
 # clip = MovieEditor.VideoFileClip("")
@@ -30,12 +30,39 @@ def getVideoContents(pathContent:str) :
             continue
     return asFileContents
 
+def toMp3(videoClip:MovieEditor.VideoFileClip,audioFileName:str):
+    return videoClip.audio.write_audiofile(audioFileName)
+
+def makeDire(path):
+    
+    if not isDirectory(path) :
+        os.makedirs(path)
+  
+def fileNameFromFilePath(path) -> str : 
+    head, tail = ntpath.split(path)
+    return tail or ntpath.basename(head)    
+
+def mp3FileName(path : str) -> str:
+    return  fileNameFromFilePath(path).split(".")[0]+".mp3"
+
 def main() :
     
     videoContents = getVideoContents(VIDEO_MEDIA_PATH)
     
     if videoContents :
-        print(len(videoContents))
+        for video in videoContents :
+            try :
+                videoClip = MovieEditor.VideoFileClip(video)
+                exceptAudioDir = os.path.dirname(video).replace('video','audio')+os.path.sep
+                makeDire(exceptAudioDir)
+                fullFileName = exceptAudioDir+mp3FileName(video)
+                toMp3(videoClip,fullFileName)
+                print(fullFileName)
+                
+            except IndexError:
+                continue
+            except OSError :
+                continue
     else : exit("Videos folder is empty")
 
 if __name__ == '__main__' :
