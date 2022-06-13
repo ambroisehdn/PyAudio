@@ -2,7 +2,6 @@
 import os,ntpath
 import moviepy.editor as MovieEditor
 
-# clip = MovieEditor.VideoFileClip("")
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))+os.path.sep
 VIDEO_MEDIA_PATH = BASE_PATH+"media/video"
 AUDIO_MEDIA_PATH = BASE_PATH+"media/audio"
@@ -45,12 +44,10 @@ def fileNameFromFilePath(path) -> str :
 def mp3FileName(path : str) -> str:
     return  fileNameFromFilePath(path).split(".")[0]+".mp3"
 
-def main() :
+def convertToMp3(videoToconverts:list) :
     
-    videoContents = getVideoContents(VIDEO_MEDIA_PATH)
-    
-    if videoContents :
-        for video in videoContents :
+    if videoToconverts :
+        for video in videoToconverts :
             try :
                 videoClip = MovieEditor.VideoFileClip(video)
                 exceptAudioDir = os.path.dirname(video).replace('video','audio')+os.path.sep
@@ -58,12 +55,16 @@ def main() :
                 fullFileName = exceptAudioDir+mp3FileName(video)
                 toMp3(videoClip,fullFileName)
                 print(fullFileName)
-                
             except IndexError:
                 continue
             except OSError :
                 continue
-    else : exit("Videos folder is empty")
+    else : exit("The folder is empty")
+    
+def main() :
+    
+    videoContents = getVideoContents(VIDEO_MEDIA_PATH)
+    convertToMp3(videoContents)
 
 if __name__ == '__main__' :
     main()
